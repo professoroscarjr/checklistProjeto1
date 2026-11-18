@@ -1,0 +1,932 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checklist Projeto Final — Linguagem de Marcação (LIMA)</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fonte Inter & JetBrains Mono para estética Deep Tech -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            tech: {
+              bg: '#0a0e17',
+              surface: '#0d1324',
+              card: '#11182c',
+              border: '#1e2947',
+              cyan: '#00f0ff',
+              purple: '#9d4edd',
+              purpleLight: '#c77dff'
+            }
+          },
+          boxShadow: {
+            'neon-cyan': '0 0 18px rgba(0, 240, 255, 0.28)',
+            'neon-purple': '0 0 18px rgba(157, 78, 221, 0.30)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Customização de Scrollbar e Animações */
+    body {
+      background-color: #0a0e17;
+      color: #e2e8f0;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(157, 78, 221, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.08) 0%, transparent 45%);
+    }
+
+    /* Checkbox Customizado Neon */
+    .custom-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 1.35rem;
+      height: 1.35rem;
+      border: 2px solid #334155;
+      border-radius: 0.4rem;
+      background-color: #0a0e17;
+      cursor: pointer;
+      display: inline-grid;
+      place-content: center;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+
+    .custom-checkbox:hover {
+      border-color: #00f0ff;
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
+    }
+
+    .custom-checkbox:checked {
+      background: linear-gradient(135deg, #00f0ff, #9d4edd);
+      border-color: transparent;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.45);
+    }
+
+    .custom-checkbox:checked::before {
+      content: "";
+      width: 0.72rem;
+      height: 0.72rem;
+      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+      background-color: #0a0e17;
+    }
+
+    /* Tags de código inline */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82em;
+      background-color: rgba(0, 240, 255, 0.09);
+      color: #00f0ff;
+      padding: 0.12rem 0.38rem;
+      border-radius: 0.3rem;
+      border: 1px solid rgba(0, 240, 255, 0.2);
+    }
+
+    /* ===================================================================
+       ESTILOS DE IMPRESSÃO / EXPORTAÇÃO PDF (@media print)
+       Transforma a interface escura num documento oficial branco e limpo
+       =================================================================== */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 14mm;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-size: 11pt !important;
+        line-height: 1.4 !important;
+      }
+
+      /* Ocultar elementos puramente interativos na impressão */
+      .no-print {
+        display: none !important;
+      }
+
+      /* Exibir cabeçalho e rodapé oficiais de impressão */
+      .print-only {
+        display: block !important;
+      }
+
+      .print-flex {
+        display: flex !important;
+      }
+
+      /* Resetar containers escuros para fundo branco com bordas nítidas */
+      header, section, .card-container, input, textarea {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: none !important;
+      }
+
+      input, textarea {
+        border: 1px solid #94a3b8 !important;
+        padding: 4px 8px !important;
+        font-weight: 600 !important;
+      }
+
+      code {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+
+      .checklist-item {
+        border-bottom: 1px solid #e2e8f0 !important;
+        padding: 6px 4px !important;
+        break-inside: avoid;
+      }
+
+      .phase-section {
+        break-inside: avoid;
+        margin-bottom: 14px !important;
+        border: 1px solid #94a3b8 !important;
+      }
+
+      /* Mostrar badge textual de status na impressão */
+      .status-badge-print {
+        display: inline-block !important;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9pt;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 4px;
+      }
+
+      .status-done {
+        border: 1px solid #15803d;
+        color: #15803d;
+        background-color: #f0fdf4;
+      }
+
+      .status-pending {
+        border: 1px solid #b91c1c;
+        color: #b91c1c;
+        background-color: #fef2f2;
+      }
+
+      .custom-checkbox {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-tech-cyan selection:text-tech-bg">
+
+  <!-- Toast de Notificação (substitui alert/confirm) -->
+  <div id="toast-container" class="no-print fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Modal de Confirmação Customizado (substitui confirm()) -->
+  <div id="confirm-modal" class="no-print fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+    <div class="bg-tech-card border border-tech-border rounded-2xl max-w-md w-full p-6 shadow-neon-purple">
+      <h3 class="text-lg font-bold text-white mb-2">Confirmar Limpeza</h3>
+      <p class="text-slate-300 text-sm mb-6">Tem certeza que deseja desmarcar todos os requisitos e limpar as observações? Os dados de identificação serão mantidos.</p>
+      <div class="flex justify-end gap-3">
+        <button id="cancel-clear-btn" type="button" class="px-4 py-2 rounded-xl border border-slate-600 text-slate-300 hover:bg-slate-800 text-sm font-medium transition">Cancelar</button>
+        <button id="confirm-clear-btn" type="button" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold transition">Sim, Limpar Seleção</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barra Superior Fixa de Progresso (Sticky) -->
+  <div class="no-print sticky top-0 z-40 bg-tech-bg/90 backdrop-blur-md border-b border-tech-border">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-tech-cyan animate-pulse"></span>
+          <span class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-300">Progresso da Entrega LIMA</span>
+        </div>
+        <div class="font-mono text-xs sm:text-sm font-bold text-tech-cyan" id="progress-label">
+          0/31 itens - 0%
+        </div>
+      </div>
+      <!-- Trilha da Barra de Progresso -->
+      <div class="w-full h-2.5 bg-tech-surface rounded-full overflow-hidden border border-tech-border">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-tech-cyan via-blue-500 to-tech-purple transition-all duration-300 ease-out" style="width: 0%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container Principal -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+
+    <!-- Cabeçalho Oficial Visível Apenas na Impressão/PDF -->
+    <div class="print-only hidden border-b-2 border-slate-800 pb-4 mb-6">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Técnico em Desenvolvimento de Sistemas</p>
+          <h1 class="text-xl font-extrabold text-slate-900">COMPROVANTE DE ENTREGA — PROJETO FINAL (LIMA)</h1>
+          <p class="text-xs text-slate-600">Unidade Curricular: Linguagem de Marcação</p>
+        </div>
+        <div class="text-right font-mono text-xs">
+          <p><strong>Emissão:</strong> <span id="print-timestamp">--/--/---- --:--</span></p>
+          <p><strong>Resultado:</strong> <span id="print-score">0/31 (0%)</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cabeçalho da Aplicação (Tela) -->
+    <header class="no-print mb-8">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tech-purple/15 border border-tech-purple/40 text-tech-purpleLight text-xs font-mono mb-3">
+        <span>&lt;LIMA /&gt;</span>
+        <span>•</span>
+        <span>Checklist Técnico de Requisitos</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-2">
+        Checklist do Projeto Final — <span class="text-transparent bg-clip-text bg-gradient-to-r from-tech-cyan to-tech-purpleLight">Linguagem de Marcação</span>
+      </h1>
+      <p class="text-slate-400 text-sm sm:text-base max-w-3xl">
+        Valide cada requisito técnico do seu site antes da submissão e do Peer Review. Seu progresso é salvo automaticamente neste navegador.
+      </p>
+    </header>
+
+    <!-- Card 1: Identificação do Aluno e Links do Projeto -->
+    <section aria-labelledby="sec-identificacao" class="card-container bg-tech-card border border-tech-border rounded-2xl p-5 sm:p-6 mb-6 shadow-lg">
+      <div class="flex items-center justify-between mb-4">
+        <h2 id="sec-identificacao" class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-tech-cyan no-print" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
+          </svg>
+          Identificação do Estudante e Repositórios
+        </h2>
+        <span class="no-print text-xs font-mono text-slate-400" id="save-status">Salvo localmente</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="student-name" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nome Completo *</label>
+          <input type="text" id="student-name" placeholder="Ex.: Ana Júlia Vieira de Castro" class="w-full rounded-xl bg-tech-bg border border-tech-border px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-tech-cyan focus:ring-1 focus:ring-tech-cyan transition">
+        </div>
+
+        <div>
+          <label for="student-ra" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Matrícula / RA *</label>
+          <input type="text" id="student-ra" placeholder="Ex.: 26161931" class="w-full rounded-xl bg-tech-bg border border-tech-border px-3.5 py-2.5 text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-tech-cyan focus:ring-1 focus:ring-tech-cyan transition">
+        </div>
+
+        <div>
+          <label for="github-url" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">URL do Repositório GitHub</label>
+          <input type="url" id="github-url" placeholder="https://github.com/usuario/projeto-lima" class="w-full rounded-xl bg-tech-bg border border-tech-border px-3.5 py-2.5 text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-tech-cyan focus:ring-1 focus:ring-tech-cyan transition">
+        </div>
+
+        <div>
+          <label for="deploy-url" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">URL do Site Publicado (Deploy)</label>
+          <input type="url" id="deploy-url" placeholder="https://usuario.github.io/projeto-lima" class="w-full rounded-xl bg-tech-bg border border-tech-border px-3.5 py-2.5 text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-tech-cyan focus:ring-1 focus:ring-tech-cyan transition">
+        </div>
+      </div>
+    </section>
+
+    <!-- Barra de Ações Rápidas -->
+    <section aria-label="Ações Rápidas" class="no-print flex flex-wrap items-center justify-between gap-3 mb-8 bg-tech-surface/80 border border-tech-border rounded-2xl p-4">
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button id="btn-check-all" type="button" class="px-3.5 py-2 rounded-xl bg-tech-card hover:bg-slate-800 border border-tech-cyan/40 text-tech-cyan text-xs sm:text-sm font-semibold transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          Marcar Todos
+        </button>
+
+        <button id="btn-clear-all" type="button" class="px-3.5 py-2 rounded-xl bg-tech-card hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-rose-400 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          Limpar Seleção
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button id="btn-copy-summary" type="button" class="px-4 py-2 rounded-xl bg-tech-purple/20 hover:bg-tech-purple/30 border border-tech-purple text-tech-purpleLight text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-neon-purple">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+          Copiar Resumo para Entrega
+        </button>
+
+        <button id="btn-export-pdf" type="button" class="px-4 py-2 rounded-xl bg-gradient-to-r from-tech-cyan to-blue-500 hover:opacity-95 text-tech-bg text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shadow-neon-cyan">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          Exportar Comprovante (Imprimir/PDF)
+        </button>
+      </div>
+    </section>
+
+    <!-- Container onde as Fases e Itens serão renderizados dinamicamente -->
+    <div id="checklist-container" class="space-y-6 mb-8"></div>
+
+    <!-- Barra de Ações Rápidas (Posicionada após as fases) -->
+    <section aria-label="Ações Rápidas" class="no-print flex flex-wrap items-center justify-between gap-3 mb-8 bg-tech-surface/80 border border-tech-border rounded-2xl p-4">
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button id="btn-check-all" type="button" class="px-3.5 py-2 rounded-xl bg-tech-card hover:bg-slate-800 border border-tech-cyan/40 text-tech-cyan text-xs sm:text-sm font-semibold transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          Marcar Todos
+        </button>
+
+        <button id="btn-clear-all" type="button" class="px-3.5 py-2 rounded-xl bg-tech-card hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-rose-400 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          Limpar Seleção
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button id="btn-copy-summary" type="button" class="px-4 py-2 rounded-xl bg-tech-purple/20 hover:bg-tech-purple/30 border border-tech-purple text-tech-purpleLight text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-neon-purple">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+          Copiar Resumo para Entrega
+        </button>
+
+        <button id="btn-export-pdf" type="button" class="px-4 py-2 rounded-xl bg-gradient-to-r from-tech-cyan to-blue-500 hover:opacity-95 text-tech-bg text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shadow-neon-cyan">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          Exportar Comprovante (Imprimir/PDF)
+        </button>
+      </div>
+    </section>
+
+    <!-- Rodapé Oficial com Hash de Verificação (Visível na Impressão/PDF) -->
+    <footer class="print-only hidden mt-8 pt-4 border-t-2 border-slate-800">
+      <div class="grid grid-cols-2 gap-6 items-end">
+        <div>
+          <p class="text-xs text-slate-600 mb-6">Declaro que os itens marcados foram implementados no código-fonte submetido para avaliação.</p>
+          <div class="border-t border-slate-700 pt-1 text-xs font-semibold text-slate-800">
+            Assinatura do Estudante / Responsável
+          </div>
+        </div>
+        <div class="bg-slate-100 border border-slate-300 rounded-lg p-3 font-mono text-xs">
+          <p class="font-bold text-slate-800 uppercase mb-1">Autenticação Digital do Comprovante</p>
+          <p class="text-slate-700">Hash SHA-Simples: <span id="print-hash" class="font-bold">0000-0000-0000</span></p>
+          <p class="text-slate-600 text-[10px] mt-1">Gerado via Checklist Interativo LIMA</p>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Lógica da Aplicação -->
+  <script>
+    // Estrutura exata das 5 Fases e 31 Requisitos
+    const CHECKLIST_DATA = [
+      {
+        id: 'fase1',
+        title: 'Fase 1: Planejamento, Design e Publicação',
+        badge: '03 Requisitos',
+        noteLabel: 'Observações / Links de Evidência (Fase 1)',
+        notePlaceholder: 'Cole aqui o link do Figma/Wireframe ou observações sobre a hospedagem...',
+        items: [
+          {
+            id: 'f1_wireframe',
+            title: 'Wireframe',
+            desc: 'Protótipo de baixa ou média fidelidade desenhado antes do início da codificação.'
+          },
+          {
+            id: 'f1_midias',
+            title: 'Otimização de Mídias',
+            desc: 'Imagens exportadas em formatos leves e adequados para web (WebP, SVG, PNG ou JPG otimizados) sem distorção.'
+          },
+          {
+            id: 'f1_deploy',
+            title: 'Deploy e Hospedagem',
+            desc: 'Site publicado online com URL acessível (ex.: GitHub Pages, Vercel ou Netlify).'
+          }
+        ]
+      },
+      {
+        id: 'fase2',
+        title: 'Fase 2: Estrutura HTML5 e Semântica',
+        badge: '12 Requisitos',
+        noteLabel: 'Observações / Links de Evidência (Fase 2)',
+        notePlaceholder: 'Informe em quais páginas (.html) estão a tabela, o vídeo, o download e o formulário...',
+        items: [
+          {
+            id: 'f2_head',
+            title: 'Head e Metadados',
+            desc: 'Uso de <code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html lang="pt-br"&gt;</code>, <code>&lt;meta charset="UTF-8"&gt;</code>, <code>&lt;meta name="viewport"&gt;</code>, <code>&lt;title&gt;</code> descritivo e comentários organizando as seções.'
+          },
+          {
+            id: 'f2_semantica',
+            title: 'Tags Semânticas',
+            desc: 'Aplicação obrigatória de <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code> e <code>&lt;footer&gt;</code>.'
+          },
+          {
+            id: 'f2_texto',
+            title: 'Formatação Textual',
+            desc: 'Hierarquia coerente de títulos (<code>&lt;h1&gt;</code> a <code>&lt;h6&gt;</code>) e uso semântico de <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code> e <code>&lt;p&gt;</code>.'
+          },
+          {
+            id: 'f2_multimidia',
+            title: 'Multimídia',
+            desc: 'Presença de imagens informativas com atributo <code>alt</code>, imagem de fundo (<code>background</code>) e pelo menos um elemento <code>&lt;video&gt;</code> incorporado.'
+          },
+          {
+            id: 'f2_link_ancora',
+            title: 'Links - Âncora Interna',
+            desc: 'Navegação interna na mesma página (<code>#secao</code>).'
+          },
+          {
+            id: 'f2_link_local',
+            title: 'Links - Páginas Locais',
+            desc: 'Navegação entre páginas locais (<code>.html</code>).'
+          },
+          {
+            id: 'f2_link_externo',
+            title: 'Links - Página Externa',
+            desc: 'Link para página externa (com <code>target="_blank"</code> e <code>rel="noopener"</code>).'
+          },
+          {
+            id: 'f2_link_download',
+            title: 'Links - Download',
+            desc: 'Link para download de arquivo (atributo <code>download</code>, ex.: PDF ou catálogo).'
+          },
+          {
+            id: 'f2_listas',
+            title: 'Listas Variadas',
+            desc: 'Uso de lista não ordenada (<code>&lt;ul&gt;</code>), ordenada (<code>&lt;ol&gt;</code>), encadeada (para menu/submenu) e lista de definição (<code>&lt;dl&gt;</code>).'
+          },
+          {
+            id: 'f2_tabelas',
+            title: 'Tabelas Estruturadas',
+            desc: 'Pelo menos uma tabela de dados contendo cabeçalho (<code>&lt;thead&gt;</code>), corpo (<code>&lt;tbody&gt;</code>) e mesclagem de células (<code>colspan</code> ou <code>rowspan</code>).'
+          },
+          {
+            id: 'f2_form_campos',
+            title: 'Formulário - Campos e Controles',
+            desc: 'Formulário funcional com <code>action</code> e <code>method</code>, contendo <code>text</code>, <code>textarea</code>, <code>select</code>, escolha única (<code>radio</code>), múltipla (<code>checkbox</code>), envio de arquivo (<code>file</code>) e botão (<code>button</code>).'
+          },
+          {
+            id: 'f2_form_validacao',
+            title: 'Formulário - Validação e Regex',
+            desc: 'Atributos de validação nativa (<code>required</code>, <code>minlength</code>, <code>type</code>) e validação via Expressão Regular (<code>pattern</code>, como telefone, CEP ou CPF).'
+          }
+        ]
+      },
+      {
+        id: 'fase3',
+        title: 'Fase 3: Estilização CSS3 e Qualidade W3C',
+        badge: '06 Requisitos',
+        noteLabel: 'Observações / Links de Evidência (Fase 3)',
+        notePlaceholder: 'Observações sobre validação W3C, breakpoints testados, paleta de cores ou posicionamento CSS...',
+        items: [
+          {
+            id: 'f3_seletores',
+            title: 'Seletores Diversificados',
+            desc: 'Uso de seletores de Tag, Classe (<code>.</code>), ID (<code>#</code>), Universal (<code>*</code>) e seletores agrupados/compartilhados.'
+          },
+          {
+            id: 'f3_cores_tipografia',
+            title: 'Identidade Visual, Cores e Tipografia',
+            desc: 'Aplicação consistente de paleta de cores (hexadecimal/RGB), contraste legível, fontes externas/customizadas e estados interativos (<code>:hover</code>, <code>:focus</code>, <code>:active</code>).'
+          },
+          {
+            id: 'f3_menus',
+            title: 'Menus e Submenus',
+            desc: 'Menu de navegação estilizado com estados <code>:hover</code>/<code>:focus</code> e submenus funcionais.'
+          },
+          {
+            id: 'f3_boxmodel',
+            title: 'Box Model e Posicionamento',
+            desc: 'Aplicação explícita de <code>margin</code>, <code>border</code>, <code>padding</code> e uso combinado de propriedades de layout e posicionamento (<code>display</code>, <code>relative</code>, <code>absolute</code>, <code>fixed</code> e <code>z-index</code>).'
+          },
+          {
+            id: 'f3_responsividade',
+            title: 'Responsividade',
+            desc: 'Adaptação comprovada para desktop, tablet e smartphone sem quebra de layout.'
+          },
+          {
+            id: 'f3_w3c',
+            title: 'Validação W3C',
+            desc: 'Comprovação de aprovação sem erros graves no W3C Markup Validation Service (HTML) e W3C CSS Validation Service.'
+          }
+        ]
+      },
+      {
+        id: 'fase4',
+        title: 'Fase 4: Modelagem de Dados e Documentação (DER e Dicionário de Dados)',
+        badge: '05 Requisitos',
+        noteLabel: 'Observações / Links de Evidência (Fase 4)',
+        notePlaceholder: 'Informe o link do diagrama (brModelo, Lucidchart, Draw.io) ou detalhes das tabelas e relacionamentos...',
+        items: [
+          {
+            id: 'f4_der',
+            title: 'Diagrama Entidade-Relacionamento (DER)',
+            desc: 'Modelagem conceitual e lógica completa contendo todas as entidades do domínio do projeto, seus atributos e identificadores únicos.'
+          },
+          {
+            id: 'f4_cardinalidades',
+            title: 'Cardinalidades e Relacionamentos',
+            desc: 'Definição explícita e correta das cardinalidades mínima e máxima (<code>1:1</code>, <code>1:N</code>, <code>N:N</code> com tabela associativa) e regras de participação entre as tabelas.'
+          },
+          {
+            id: 'f4_chaves',
+            title: 'Chaves e Integridade Referencial',
+            desc: 'Mapeamento claro das Chaves Primárias (<code>PK</code>) e Chaves Estrangeiras (<code>FK</code>) garantindo a integridade referencial entre os dados capturados no front-end e o banco.'
+          },
+          {
+            id: 'f4_dicionario',
+            title: 'Dicionário de Dados Completo',
+            desc: 'Documentação estruturada de todas as tabelas contendo nome do campo, tipo de dado (<code>VARCHAR</code>, <code>INT</code>, <code>DECIMAL</code>, <code>DATE</code>, <code>BOOLEAN</code>), tamanho/precisão, nulidade (<code>NOT NULL</code> / <code>NULL</code>), valores padrão (<code>DEFAULT</code>) e descrição funcional.'
+          },
+          {
+            id: 'f4_constraints',
+            title: 'Restrições de Domínio e Negócio (Constraints)',
+            desc: 'Especificação de regras de unicidade (<code>UNIQUE</code>), validações de domínio (<code>CHECK</code>) e alinhamento direto entre os campos dos formulários HTML (atributos <code>name</code>, <code>maxlength</code> e <code>pattern</code>) e as colunas do banco de dados.'
+          }
+        ]
+      },
+      {
+        id: 'fase5',
+        title: 'Fase 5: Apresentação de Pitch e Comunicação do Projeto',
+        badge: '05 Requisitos',
+        noteLabel: 'Observações da Fase 5 (Link dos slides, tempo de apresentação ou anotações do pitch)',
+        notePlaceholder: 'Cole aqui o link dos slides (Canva, Google Slides, Figma), duração cronometrada do pitch ou anotações da apresentação...',
+        items: [
+          {
+            id: 'f5_storytelling',
+            title: 'Roteiro e Storytelling do Problema',
+            desc: 'Apresentação clara do problema real que o site resolve, público-alvo e proposta de valor da solução.'
+          },
+          {
+            id: 'f5_livedemo',
+            title: 'Demonstração Funcional ao Vivo (Live Demo)',
+            desc: 'Navegação fluida pelo site publicado (deploy), demonstrando responsividade, links, formulários com Regex e recursos multimídia sem falhas.'
+          },
+          {
+            id: 'f5_defesa_tecnica',
+            title: 'Defesa Técnica (Código, DER e Dicionário de Dados)',
+            desc: 'Explicação objetiva das decisões de arquitetura HTML5/CSS3, validação W3C e modelagem do banco de dados (DER e Dicionário de Dados).'
+          },
+          {
+            id: 'f5_apoio_visual',
+            title: 'Material de Apoio Visual',
+            desc: 'Slides ou roteiro visual limpo, com alta legibilidade, sem excesso de texto e alinhado à identidade visual do projeto.'
+          },
+          {
+            id: 'f5_tempo_oratoria',
+            title: 'Gestão de Tempo e Oratória',
+            desc: 'Apresentação objetiva dentro do limite de tempo estipulado (ex.: 3 a 5 minutos), com clareza na fala, postura profissional e domínio para responder perguntas.'
+          }
+        ]
+      }
+    ];
+
+    const STORAGE_KEY = 'lima_project_checklist_v3';
+
+    // Estado inicial da aplicação
+    let state = {
+      studentName: '',
+      studentRa: '',
+      githubUrl: '',
+      deployUrl: '',
+      checkedItems: {},
+      phaseNotes: {
+        fase1: '',
+        fase2: '',
+        fase3: '',
+        fase4: '',
+        fase5: ''
+      }
+    };
+
+    // Carregar dados salvos do localStorage
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state = {
+            ...state,
+            ...parsed,
+            checkedItems: parsed.checkedItems || {},
+            phaseNotes: { ...state.phaseNotes, ...(parsed.phaseNotes || {}) }
+          };
+        }
+      } catch (e) {
+        console.error('Erro ao carregar dados do localStorage:', e);
+      }
+    }
+
+    // Salvar dados no localStorage com feedback visual
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        const statusEl = document.getElementById('save-status');
+        if (statusEl) {
+          statusEl.textContent = 'Salvo agora ✓';
+          statusEl.classList.add('text-tech-cyan');
+          setTimeout(() => {
+            statusEl.textContent = 'Salvo localmente';
+            statusEl.classList.remove('text-tech-cyan');
+          }, 1500);
+        }
+      } catch (e) {
+        console.error('Erro ao salvar no localStorage:', e);
+      }
+    }
+
+    // Exibir notificação Toast não-intrusiva
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const borderColor = type === 'success' ? 'border-tech-cyan text-tech-cyan' : 'border-tech-purple text-tech-purpleLight';
+      
+      toast.className = `pointer-events-auto bg-tech-card/95 backdrop-blur-md border ${borderColor} px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 transition-all duration-300 transform translate-y-2 opacity-0`;
+      toast.innerHTML = `<span>${message}</span>`;
+      
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    // Gerar Hash Simples de Verificação para o Comprovante
+    function generateVerificationHash() {
+      const totalItems = getTotalItemsCount();
+      const checkedCount = getCheckedCount();
+      const rawString = `${state.studentName}|${state.studentRa}|${checkedCount}/${totalItems}|${state.githubUrl}|${state.deployUrl}`;
+      
+      let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+      for (let i = 0, ch; i < rawString.length; i++) {
+        ch = rawString.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+      }
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      
+      const hex = (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16).toUpperCase().padStart(12, '0');
+      return `${hex.slice(0, 4)}-${hex.slice(4, 8)}-${hex.slice(8, 12)}`;
+    }
+
+    function getTotalItemsCount() {
+      return CHECKLIST_DATA.reduce((acc, phase) => acc + phase.items.length, 0);
+    }
+
+    function getCheckedCount() {
+      return CHECKLIST_DATA.reduce((acc, phase) => {
+        return acc + phase.items.filter(item => Boolean(state.checkedItems[item.id])).length;
+      }, 0);
+    }
+
+    // Atualizar barra de progresso e badges de cada fase
+    function updateProgressUI() {
+      const total = getTotalItemsCount();
+      const checked = getCheckedCount();
+      const percentage = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+      const labelEl = document.getElementById('progress-label');
+      const barEl = document.getElementById('progress-bar');
+
+      if (labelEl) labelEl.textContent = `${checked}/${total} itens - ${percentage}%`;
+      if (barEl) barEl.style.width = `${percentage}%`;
+
+      // Atualizar contadores por fase
+      CHECKLIST_DATA.forEach(phase => {
+        const phaseTotal = phase.items.length;
+        const phaseChecked = phase.items.filter(i => Boolean(state.checkedItems[i.id])).length;
+        const badgeEl = document.getElementById(`badge-${phase.id}`);
+        if (badgeEl) {
+          badgeEl.textContent = `${phaseChecked}/${phaseTotal} concluídos`;
+          if (phaseChecked === phaseTotal) {
+            badgeEl.className = 'text-xs font-mono px-2.5 py-1 rounded-full bg-tech-cyan/20 text-tech-cyan border border-tech-cyan/40 font-semibold';
+          } else {
+            badgeEl.className = 'text-xs font-mono px-2.5 py-1 rounded-full bg-tech-surface text-slate-300 border border-tech-border';
+          }
+        }
+      });
+    }
+
+    // Renderizar todo o checklist no DOM
+    function renderChecklist() {
+      const container = document.getElementById('checklist-container');
+      container.innerHTML = '';
+
+      CHECKLIST_DATA.forEach(phase => {
+        const section = document.createElement('section');
+        section.className = 'phase-section card-container bg-tech-card border border-tech-border rounded-2xl p-5 sm:p-6 shadow-lg';
+        section.setAttribute('aria-labelledby', `title-${phase.id}`);
+
+        // Cabeçalho da Fase
+        const headerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-tech-border">
+            <h2 id="title-${phase.id}" class="text-lg sm:text-xl font-bold text-white flex items-center gap-2.5">
+              <span class="w-1.5 h-6 rounded-full bg-gradient-to-b from-tech-cyan to-tech-purple no-print"></span>
+              ${phase.title}
+            </h2>
+            <span id="badge-${phase.id}" class="text-xs font-mono px-2.5 py-1 rounded-full bg-tech-surface text-slate-300 border border-tech-border">
+              0/${phase.items.length} concluídos
+            </span>
+          </div>
+        `;
+
+        // Lista de Requisitos da Fase
+        const itemsListHTML = phase.items.map(item => {
+          const isChecked = Boolean(state.checkedItems[item.id]);
+          return `
+            <div class="checklist-item group flex items-start gap-3.5 p-3.5 rounded-xl border transition-all duration-200 ${
+              isChecked 
+                ? 'bg-tech-cyan/[0.04] border-tech-cyan/30' 
+                : 'bg-tech-bg/60 border-tech-border/70 hover:border-slate-600'
+            }">
+              <input 
+                type="checkbox" 
+                id="${item.id}" 
+                data-item-id="${item.id}"
+                class="custom-checkbox mt-0.5" 
+                ${isChecked ? 'checked' : ''}
+              >
+              <label for="${item.id}" class="flex-1 cursor-pointer select-none">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="font-semibold text-sm sm:text-base transition-colors ${isChecked ? 'text-tech-cyan' : 'text-slate-100 group-hover:text-white'}">
+                    ${item.title}
+                  </span>
+                  <!-- Badge exibido apenas na versão impressa/PDF -->
+                  <span class="status-badge-print hidden ${isChecked ? 'status-done' : 'status-pending'}">
+                    ${isChecked ? '[CONCLUÍDO]' : '[PENDENTE]'}
+                  </span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
+                  ${item.desc}
+                </p>
+              </label>
+            </div>
+          `;
+        }).join('');
+
+        // Campo Opcional de Observações / Evidências por Fase
+        const noteHTML = `
+          <div class="mt-4 pt-3 border-t border-tech-border/60">
+            <label for="note-${phase.id}" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+              ${phase.noteLabel || `Observações / Links de Evidência (${phase.title.split(':')[0]})`}
+            </label>
+            <textarea 
+              id="note-${phase.id}" 
+              data-phase-note="${phase.id}"
+              rows="2" 
+              placeholder="${phase.notePlaceholder}"
+              class="w-full rounded-xl bg-tech-bg border border-tech-border px-3.5 py-2 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-tech-purple focus:ring-1 focus:ring-tech-purple transition resize-y"
+            >${state.phaseNotes[phase.id] || ''}</textarea>
+          </div>
+        `;
+
+        section.innerHTML = headerHTML + `<div class="space-y-2.5">${itemsListHTML}</div>` + noteHTML;
+        container.appendChild(section);
+      });
+
+      attachChecklistEvents();
+      updateProgressUI();
+    }
+
+    // Vincular eventos aos checkboxes e textareas renderizados
+    function attachChecklistEvents() {
+      document.querySelectorAll('input[data-item-id]').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+          const itemId = e.target.getAttribute('data-item-id');
+          state.checkedItems[itemId] = e.target.checked;
+          saveState();
+          renderChecklist(); // Re-renderiza para atualizar estilos do card e badges de impressão
+        });
+      });
+
+      document.querySelectorAll('textarea[data-phase-note]').forEach(textarea => {
+        textarea.addEventListener('input', (e) => {
+          const phaseId = e.target.getAttribute('data-phase-note');
+          state.phaseNotes[phaseId] = e.target.value;
+          saveState();
+        });
+      });
+    }
+
+    // Inicializar campos de identificação do cabeçalho
+    function initIdentificationFields() {
+      const nameInput = document.getElementById('student-name');
+      const raInput = document.getElementById('student-ra');
+      const gitInput = document.getElementById('github-url');
+      const deployInput = document.getElementById('deploy-url');
+
+      nameInput.value = state.studentName;
+      raInput.value = state.studentRa;
+      gitInput.value = state.githubUrl;
+      deployInput.value = state.deployUrl;
+
+      nameInput.addEventListener('input', (e) => { state.studentName = e.target.value; saveState(); });
+      raInput.addEventListener('input', (e) => { state.studentRa = e.target.value; saveState(); });
+      gitInput.addEventListener('input', (e) => { state.githubUrl = e.target.value; saveState(); });
+      deployInput.addEventListener('input', (e) => { state.deployUrl = e.target.value; saveState(); });
+    }
+
+    // Configurar botões de ação rápida
+    function initActionButtons() {
+      // Marcar Todos
+      document.getElementById('btn-check-all').addEventListener('click', () => {
+        CHECKLIST_DATA.forEach(phase => {
+          phase.items.forEach(item => {
+            state.checkedItems[item.id] = true;
+          });
+        });
+        saveState();
+        renderChecklist();
+        showToast('Todos os 31 requisitos foram marcados como concluídos!', 'success');
+      });
+
+      // Modal de Limpar Seleção
+      const modal = document.getElementById('confirm-modal');
+      document.getElementById('btn-clear-all').addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      });
+
+      document.getElementById('cancel-clear-btn').addEventListener('click', () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      });
+
+      document.getElementById('confirm-clear-btn').addEventListener('click', () => {
+        state.checkedItems = {};
+        state.phaseNotes = { fase1: '', fase2: '', fase3: '', fase4: '', fase5: '' };
+        saveState();
+        renderChecklist();
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        showToast('Seleção e observações limpas.');
+      });
+
+      // Copiar Resumo para Entrega (usando document.execCommand('copy') conforme compatibilidade)
+      document.getElementById('btn-copy-summary').addEventListener('click', () => {
+        const total = getTotalItemsCount();
+        const checked = getCheckedCount();
+        const pct = Math.round((checked / total) * 100);
+        const now = new Date().toLocaleString('pt-BR');
+        const hash = generateVerificationHash();
+
+        let textSummary = `=== ENTREGA PROJETO FINAL — LIMA ===\n`;
+        textSummary += `Aluno: ${state.studentName || 'Não informado'}\n`;
+        textSummary += `RA/Matrícula: ${state.studentRa || 'Não informado'}\n`;
+        textSummary += `Repositório GitHub: ${state.githubUrl || 'Não informado'}\n`;
+        textSummary += `Site Publicado (Deploy): ${state.deployUrl || 'Não informado'}\n`;
+        textSummary += `Progresso: ${checked}/${total} itens (${pct}%)\n`;
+        textSummary += `Data/Hora: ${now} | Hash: ${hash}\n\n`;
+
+        CHECKLIST_DATA.forEach(phase => {
+          textSummary += `${phase.title.toUpperCase()}\n`;
+          phase.items.forEach(item => {
+            const mark = state.checkedItems[item.id] ? '[X]' : '[ ]';
+            textSummary += `  ${mark} ${item.title}\n`;
+          });
+          if (state.phaseNotes[phase.id]?.trim()) {
+            textSummary += `  > Obs.: ${state.phaseNotes[phase.id].trim()}\n`;
+          }
+          textSummary += `\n`;
+        });
+
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.value = textSummary;
+        tempTextArea.style.position = 'fixed';
+        tempTextArea.style.left = '-9999px';
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        
+        try {
+          document.execCommand('copy');
+          showToast('Resumo formatado copiado para a área de transferência!', 'success');
+        } catch (err) {
+          showToast('Não foi possível copiar automaticamente.');
+        }
+        document.body.removeChild(tempTextArea);
+      });
+
+      // Exportar Comprovante (Imprimir / Salvar PDF)
+      document.getElementById('btn-export-pdf').addEventListener('click', () => {
+        const total = getTotalItemsCount();
+        const checked = getCheckedCount();
+        const pct = Math.round((checked / total) * 100);
+        const now = new Date().toLocaleString('pt-BR');
+        const hash = generateVerificationHash();
+
+        document.getElementById('print-timestamp').textContent = now;
+        document.getElementById('print-score').textContent = `${checked}/${total} itens (${pct}%)`;
+        document.getElementById('print-hash').textContent = hash;
+
+        window.print();
+      });
+    }
+
+    // Inicialização ao carregar o DOM
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      initIdentificationFields();
+      renderChecklist();
+      initActionButtons();
+    });
+  </script>
+</body>
+</html>
